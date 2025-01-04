@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Student Management System | Delete</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+    <link rel="stylesheet" href="css/mdb.min.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+            <div class="position-sticky">
+                <div class="list-group list-group-flush mx-3 mt-4">
+                    <a href="index.html" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+                        <i class="fa fa-user me-3"></i><span>View Student</span>
+                    </a>
+                    <a href="addStudent.html" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+                        <i class="fas fa-pen me-3"></i><span>Add Student</span>
+                    </a>
+                    <a href="editStudent.html" class="list-group-item list-group-item-action py-2 ripple">
+                        <i class="fas fa-marker fa-fw me-3"></i><span>Update Student</span>
+                    </a>
+                    <a href="deleteStudent.html" class="list-group-item list-group-item-action py-2 ripple">
+                        <i class="fas fa-trash fa-fw me-3"></i><span>Delete Student</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.html">
+                    <i class="fas fa-users fa-fw me-2" style="font-size: 50px;"></i>
+                    <h1>Student Management System</h1>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container pt-4 mt-2">
+            <form id="updateStudentForm" style="margin-top: 55px; margin-bottom: 5px">
+                <div class="mb-3">
+                    <label for="selectStudent" class="form-label">Select Student Number</label>
+                    <select class="form-select" id="studNumber" name="studNumber" required></select>
+                </div>
+                <button type="button" class="btn btn-dark" onclick="deleteStudent()">Delete Student</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                url: '/student',
+                success: function (data) {
+                    var selectStudent = $('#studNumber');
+                    selectStudent.empty();
+
+                    $.each(data, function (index, student) {
+                        selectStudent.append('<option value="' + student.studNumber + '">' + student.studNumber + '</option>');
+                    });
+                },
+                error: function () {
+                    console.error('Error fetching student numbers from the API');
+                }
+            });
+        });
+
+        function deleteStudent() {
+            var selectedStudentNumber = $('#studNumber').val();
+
+            if (!selectedStudentNumber) {
+                alert('Please select a student number');
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete this student?')) {
+                axios.delete('/student/' + selectedStudentNumber)
+                    .then(function (response) {
+                        console.log('Student deleted successfully:', response);
+                        alert('Delete Success');
+                        location.reload();
+                    })
+                    .catch(function (error) {
+                        console.error('Error deleting student:', error);
+                        alert('Error Delete');
+                    });
+            }
+        }
+    </script>
+
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+    <script type="text/javascript" src="js/admin.js"></script>
+</body>
+
+</html>
